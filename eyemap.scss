@@ -1,0 +1,67 @@
+// ----------------------------------------------------------------------------
+// Sass declarations
+// ----------------------------------------------------------------------------
+$background-color:  #fff;
+ 
+// ----------------------------------------------------------------------------
+// Widget-camap styles
+// ----------------------------------------------------------------------------
+.widget-eyemap {
+ 
+  background-color: $background-color;
+ 
+  .title {
+    color: #000;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    left: 0;
+    top: 10px;
+  }
+ 
+  .map_container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+  }
+
+  .gauge_container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+  }
+ 
+  .updated-at {
+    color: #000
+  }
+
+  .background {
+    fill: blue;
+    pointer-events: all;
+  }
+
+  .countries {
+    fill: #cecede;
+  }
+ 
+
+  .point {
+    fill: #1221ec;
+    stroke: #ffffff;
+    // opacity: 0.40;
+  }
+
+
+ 
+  .red {
+    fill: #c90d0d;
+  }
+ 
+  .green {
+    fill: #0dc92c;
+  }
+ 
+}
+
