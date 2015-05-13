@@ -19,7 +19,7 @@ $background-color:  #fff;
     top: 10px;
   }
  
-  .map_container {
+  svg {
     position: absolute;
     left: 0;
     top: 0;
@@ -32,7 +32,15 @@ $background-color:  #fff;
     top: 0;
     z-index: 1;
   }
- 
+
+  .map_container {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 1860px;
+    height: 720px;
+  }
+
   .updated-at {
     color: #000
   }
