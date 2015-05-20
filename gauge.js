@@ -46,7 +46,7 @@ function Gauge(placeholderName, configuration, svgObj)
                     .attr("cx", this.config.cx)
                     .attr("cy", this.config.cy)
                     .attr("r", this.config.raduis)
-                    .style("fill", "#ccc")
+                    .style("fill", "#000")
                     .style("stroke", "#000")
                     .style("stroke-width", "0.5px");
                     
@@ -79,7 +79,7 @@ function Gauge(placeholderName, configuration, svgObj)
             var fontSize = Math.round(this.config.size / 8);
             this.body.append("svg:text")
                         .attr("x", this.config.cx)
-                        .attr("y", this.config.cy  + (fontSize / 2) + 60) 
+                        .attr("y", this.config.cy  - (fontSize / 2) - (this.config.size/2) )
                         .attr("dy", fontSize / 2)
                         .attr("text-anchor", "middle")
                         .text(this.config.label)
@@ -91,10 +91,28 @@ function Gauge(placeholderName, configuration, svgObj)
 
 
 
+
+        //Append Text for Max value
+        var point = this.valueToPoint(this.config.max, 0.63);
+
+
+
         var fontSize = Math.round(this.config.size / 12);
 
 
-        this.generateLines(fontSize);
+        //this.generateLines(fontSize);
+
+        this.body.append("svg:text")
+            .attr("id", "maxlabel")
+            .attr("x", this.config.cx)
+            .attr("y", this.config.cy + ((this.config.size /2) * 0.7))
+            .attr("dy", fontSize / 3)
+            .attr("text-anchor", "middle")
+            .text(this.config.max)
+            .style("font-size", fontSize + "px")
+            .style("fill", "#333")
+            .style("stroke-width", "0px");
+
 
         
         var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
@@ -102,6 +120,7 @@ function Gauge(placeholderName, configuration, svgObj)
         var midValue = (this.config.min + this.config.max) / 2;
         
         var pointerPath = this.buildPointerPath(midValue);
+        console.log(pointerPath)
         
         var pointerLine = d3.svg.line()
                                     .x(function(d) { return d.x })
@@ -113,16 +132,20 @@ function Gauge(placeholderName, configuration, svgObj)
                            .enter()
                                .append("svg:path")
                                    .attr("d", pointerLine)
-                                   .style("fill", "#dc3912")
-                                   .style("stroke", "#c63310")
-                                   .style("fill-opacity", 0.7)
+                                   //.style("fill", "#dc3912")
+                                   .style("fill","#000000")
+                                   .style("stroke", "#000000")
+                                   //.style("fill-opacity", 0.7)
                    
        pointerContainer.append("svg:circle")
                            .attr("cx", this.config.cx)
                            .attr("cy", this.config.cy)
-                           .attr("r", 0.12 * this.config.raduis)
-                           .style("fill", "#4684EE")
-                           .style("stroke", "#666")
+                           //.attr("r", 0.12 * this.config.raduis)
+                           .attr("r", 0.6 * this.config.raduis)
+                           //.style("fill", "#4684EE")
+                           .style("fill", "#000")
+                           //.style("stroke", "#666")
+                           .style("stroke", "#000")
                            .style("opacity", 1);
         
         var fontSize = Math.round(this.config.size / 4);
@@ -130,14 +153,16 @@ function Gauge(placeholderName, configuration, svgObj)
                             .data([midValue])
                             .enter()
                                 .append("svg:text")
+                                    .attr("id", "g_value")
                                     .attr("x", this.config.cx)
                                     //.attr("y", this.config.size - this.config.cy / 4 - fontSize)
-                                    .attr("y", this.config.cy  - (fontSize / 2) - 8)
-                                    .attr("dy", fontSize / 2)
+                                    .attr("y", this.config.cy)
+                                    .attr("dy", fontSize / 3)
                                     .attr("text-anchor", "middle")
                                     .style("font-size", fontSize + "px")
-                                    .style("fill", "#000")
+                                    .style("fill", "#fff")
                                     .style("stroke-width", "0px");
+
 
         
         this.redraw(this.config.min, 0);
@@ -155,6 +180,8 @@ function Gauge(placeholderName, configuration, svgObj)
         var tail = valueToPoint(tailValue, 0.28);
         var tail1 = valueToPoint(tailValue - delta, 0.12);
         var tail2 = valueToPoint(tailValue + delta, 0.12);
+
+        //console.log("Head :"+head+" Head1: "+head1+" Head2: "+head2+" Tail: "+tail+" Tail1: "+tail1+" Tail2: "+tail2)
         
         return [head, head1, tail2, tail, tail1, head2, head];
         
@@ -185,19 +212,21 @@ function Gauge(placeholderName, configuration, svgObj)
     this.redraw = function(value, transitionDuration, maxVal)
     {
         //If there is a max value, remove all ticks and label from the meter and regenerate them
-        
+         var textVal;
+         var pointerContainer = this.body.select(".pointerContainer");
         if (maxVal != undefined)
         {
             //
-            console.log("maxVal is defined. Updating meter");
+            //console.log("maxVal is defined. Updating meter");
             //this.body.selectAll("line").remove();
             //document.getElementById("maxlabel").remove();
             //document.getElementById("minlabel").remove();
             // minmaxlabel.nodeValue=maxVal;
             this.config.max = maxVal;
-            console.log("new Max is "+this.config.max);
             this.config.range = this.config.max - this.config.min;
-            document.getElementById("maxlabel").firstChild.nodeValue = this.config.max;
+            
+            document.getElementById("maxlabel").firstChild.nodeValue = this.config.max
+            //pointerContainer.getElementById("maxlabel").text(Math.round(maxVal));
 
             //Use svg attribute updates instead of deleting the svg elements
             //this.generateLines(Math.round(this.config.size / 16));
@@ -206,9 +235,21 @@ function Gauge(placeholderName, configuration, svgObj)
             //var midValue = (this.config.min + this.config.max) / 2;
             //pointerContainer.selectAll("text").data([midValue])
         }
-        var pointerContainer = this.body.select(".pointerContainer");
-        pointerContainer.selectAll("text").text(Math.round(value));
-        
+
+        if (value >= 1000)
+        {
+            textVal = String(Number(value/1000).toFixed(1))+"k"; 
+        }
+        else
+        {
+           textVal = String(Math.round(value));
+        }
+
+        //var pointerContainer = this.body.select(".pointerContainer");
+        pointerContainer.selectAll("text").text(textVal);
+        //pointerContainer.getElementById("g_value").text(value);
+        //document.getElementById("g_value").firstChild.nodeValue = value
+
         var pointer = pointerContainer.selectAll("path");
         pointer.transition()
                     .duration(undefined != transitionDuration ? transitionDuration : this.config.transitionDuration)
@@ -287,36 +328,34 @@ function Gauge(placeholderName, configuration, svgObj)
                         .attr("y2", point2.y)
                         .style("stroke", "#333")
                         .style("stroke-width", "2px");
-            
-            console.log("major value ="+major);
 
             //Text label for Minimum and Maximum value
             //if (major == this.config.min || major == this.config.max)
-            if (major == this.config.min)
-            {
-                var point = this.valueToPoint(major, 0.63);
-                this.body.append("svg:text")
-                            .attr("id", "minlabel")
-                            .attr("x", point.x)
-                            .attr("y", point.y)
-                            .attr("dy", fontSize / 3)
-                            .attr("text-anchor", "start")
-                            .text(major)
-                            .style("font-size", fontSize + "px")
-                            .style("fill", "#333")
-                            .style("stroke-width", "0px");
-            }
+            // if (major == this.config.min)
+            // {
+            //     var point = this.valueToPoint(major, 0.63);
+            //     this.body.append("svg:text")
+            //                 .attr("id", "minlabel")
+            //                 .attr("x", point.x)
+            //                 .attr("y", point.y)
+            //                 .attr("dy", fontSize / 3)
+            //                 .attr("text-anchor", "start")
+            //                 .text(major)
+            //                 .style("font-size", fontSize + "px")
+            //                 .style("fill", "#333")
+            //                 .style("stroke-width", "0px");
+            // }
             id_count+=1;
         }
 
         //Append Text for Max value
-        var point = this.valueToPoint(this.config.max, 0.63);
+        //var point = this.valueToPoint(this.config.max, 0.63);
         this.body.append("svg:text")
                     .attr("id", "maxlabel")
-                    .attr("x", point.x)
-                    .attr("y", point.y)
+                    .attr("x", this.config.cx)
+                    .attr("y", this.config.cy + ((this.config.size /2) * 0.7))
                     .attr("dy", fontSize / 3)
-                    .attr("text-anchor", "end")
+                    .attr("text-anchor", "middle")
                     .text(this.config.max)
                     .style("font-size", fontSize + "px")
                     .style("fill", "#333")
@@ -346,7 +385,6 @@ function Gauge(placeholderName, configuration, svgObj)
                 
                // this.body.append("svg:line")
                 var minortick = document.getElementById("minorticks"+String(minor_id_count));
-                console.log("minortick  is " +minortick);
                 minortick.setAttribute("x1", point1.x);
                 minortick.setAttribute("y1", point1.y);
                 minortick.setAttribute("x2", point2.x);
@@ -362,7 +400,6 @@ function Gauge(placeholderName, configuration, svgObj)
             //this.body.append("svg:line")
                 svg = document.getElementById("majorticks"+String(id_count));
                 var majortick = document.getElementById("majorticks"+String(id_count));
-                console.log("majortick  is " +majortick);
                 //majortick.setAttribute("x1", point1.x);
                 //majortick.setAttribute("y1", point1.y);
                 //majortick.setAttribute("x2", point2.x);
@@ -375,6 +412,14 @@ function Gauge(placeholderName, configuration, svgObj)
         document.getElementById("maxlabel").firstChild.nodeValue = this.config.max;
 
     }
+
+    this.fadeSwitchElements = function(svgElement, newValue)
+    {
+        element1 = svgElement.selectAll("text").text(newValue);
+        element1.animate({fontSize: "3em"});
+        element1.animate({fontSize: "1em"});
+    }
+
     
     // initialization
     this.configure(configuration);  
