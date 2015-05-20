@@ -4,7 +4,7 @@
 $background-color:  #fff;
  
 // ----------------------------------------------------------------------------
-// Widget-camap styles
+// Widget-eyemap styles
 // ----------------------------------------------------------------------------
 .widget-eyemap {
  
@@ -18,13 +18,46 @@ $background-color:  #fff;
     left: 0;
     top: 10px;
   }
- 
-  svg {
+
+  #body {
+   width: 100%;
+   height: 100%;
+  }
+
+  #vpnSG, #vpnJP, #vpnAU, #vpnDE, #vpnEU, #vpnUSE, #vpnUSW, #vpnSA {
+    stroke-width : 10px;
+    stroke: #0000B2;
+    fill: none;
+    stroke-opacity: 0.5;
+  }
+
+  #val_vpn_fro_SG, #val_vpn_fro_JP, #val_vpn_fro_AU, #val_vpn_fro_DE, #val_vpn_fro_EU, #val_vpn_fro_USE, #val_vpn_fro_USW, #val_vpn_fro_SA {
+    font-family : "Courier New", Courier, monospace;
+    font-size: 1em; /* 16px */
+    font-weight: bold;
+  }
+
+  #val_vpn_to_SG, #val_vpn_to_JP, #val_vpn_to_AU, #val_vpn_to_DE, #val_vpn_to_EU, #val_vpn_to_USE, #val_vpn_to_USW, #val_vpn_to_SA {
+    font-family : "Courier New", Courier, monospace;
+    font-size: 1em; /* 16px */
+    font-weight: bold;
+
+  }
+
+  
+  svg.datamap {
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 0;
+    //z-index: 0;
+    background: lightblue;
   }
+
+  .draggable {
+    cursor: move;
+  }
+
+
 
   .gauge_container {
     position: absolute;
@@ -33,13 +66,6 @@ $background-color:  #fff;
     z-index: 1;
   }
 
-  .map_container {
-    position: relative;
-    left: 0;
-    top: 0;
-    width: 1860px;
-    height: 720px;
-  }
 
   .updated-at {
     color: #000
@@ -49,18 +75,6 @@ $background-color:  #fff;
     fill: blue;
     pointer-events: all;
   }
-
-  .countries {
-    fill: #cecede;
-  }
- 
-
-  .point {
-    fill: #1221ec;
-    stroke: #ffffff;
-    // opacity: 0.40;
-  }
-
 
  
   .red {
